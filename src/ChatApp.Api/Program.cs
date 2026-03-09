@@ -21,8 +21,8 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
-builder.Services.AddSignalR();
-// .AddStackExchangeRedis(builder.Configuration.GetConnectionString("Redis")!);
+builder.Services.AddSignalR()
+.AddStackExchangeRedis(builder.Configuration.GetConnectionString("Redis")!);
 
 var app = builder.Build();
 

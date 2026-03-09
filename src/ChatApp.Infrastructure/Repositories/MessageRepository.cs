@@ -33,8 +33,9 @@ namespace ChatApp.Infrastructure.Repositories
         {
             return await _retryPolicy.ExecuteAsync(() =>
                 _context.Messages
-                    .OrderBy(m => m.SentAt)
+                    .OrderByDescending(m => m.SentAt)
                     .Take(count)
+                    .OrderBy(m => m.SentAt)
                     .ToListAsync());
         }
 
