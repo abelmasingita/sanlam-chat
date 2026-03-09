@@ -15,3 +15,11 @@
 /.vs/ChatApp.slnx/FileContentIndex
 /src/ChatApp.Application/bin/Debug/net10.0
 /src/ChatApp.Domain/bin/Debug/net10.0
+/src/ChatApp.Api/bin/Debug/net10.0
+/src/ChatApp.Infrastructure/bin/Debug/net10.0
+/src/ChatApp.Application/bin/Debug/net10.0
+/src/ChatApp.Domain/bin/Debug/net10.0
+/src/ChatApp.Api/bin/Debug/net8.0
+/src/ChatApp.Application/bin/Debug/net8.0
+/src/ChatApp.Domain/bin/Debug/net8.0
+/src/ChatApp.Infrastructure/bin/Debug/net8.0
