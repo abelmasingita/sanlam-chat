@@ -11,3 +11,7 @@
 /src/ChatApp.Infrastructure/obj
 /src/ChatApp.Api/appsettings.json
 /src/ChatApp.Api/appsettings.Development.json
+/.vs/ChatApp.slnx/FileContentIndex/b12e6071-9426-4fee-a78f-ea0e63cd5f2e.vsidx
+/.vs/ChatApp.slnx/FileContentIndex
+/src/ChatApp.Application/bin/Debug/net10.0
+/src/ChatApp.Domain/bin/Debug/net10.0
