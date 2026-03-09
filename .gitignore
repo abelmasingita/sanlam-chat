@@ -23,3 +23,17 @@
 /src/ChatApp.Application/bin/Debug/net8.0
 /src/ChatApp.Domain/bin/Debug/net8.0
 /src/ChatApp.Infrastructure/bin/Debug/net8.0
+
+# Frontend (Next.js)
+src/ChatApp.Web/node_modules
+src/ChatApp.Web/.next/
+src/ChatApp.Web/out/
+src/ChatApp.Web/build
+src/ChatApp.Web/.env*
+src/ChatApp.Web/.vercel
+src/ChatApp.Web/coverage
+src/ChatApp.Web/*.tsbuildinfo
+src/ChatApp.Web/next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
