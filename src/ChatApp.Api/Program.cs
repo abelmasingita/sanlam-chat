@@ -53,8 +53,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-if (!app.Environment.IsDevelopment())
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.MapControllers();
 app.MapHub<ChatHub>("/hubs/chat");

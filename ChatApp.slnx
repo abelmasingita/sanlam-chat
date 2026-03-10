@@ -5,4 +5,7 @@
     <Project Path="src/ChatApp.Domain/ChatApp.Domain.csproj" />
     <Project Path="src/ChatApp.Infrastructure/ChatApp.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ChatApp.Tests/ChatApp.Tests.csproj" />
+  </Folder>
 </Solution>
