@@ -4,6 +4,7 @@ using MediatR;
 
 namespace ChatApp.Application.Features.Messages.Queries
 {
+    // Defaults to the last 50 messages. The repository fetches newest-first then re-sorts ascending for display.
     public record GetRecentMessagesQuery(int Count = 50) : IRequest<IEnumerable<MessageDto>>;
 
     public class GetRecentMessagesHandler : IRequestHandler<GetRecentMessagesQuery, IEnumerable<MessageDto>>

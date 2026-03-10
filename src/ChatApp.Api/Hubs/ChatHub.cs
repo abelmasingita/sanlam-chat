@@ -14,6 +14,8 @@ namespace ChatApp.Api.Hubs
             _mediator = mediator;
         }
 
+        // Clients invoke this method. The message is persisted via MediatR,
+        // then broadcast to all connected clients as a ReceiveMessage event.
         public async Task SendMessage(SendMessageRequest request)
         {
             var dto = await _mediator.Send(

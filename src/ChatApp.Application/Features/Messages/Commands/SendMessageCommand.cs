@@ -5,6 +5,7 @@ using MediatR;
 
 namespace ChatApp.Application.Features.Messages.Commands
 {
+    // Command carries the intent to persist a new message. MediatR routes it to SendMessageHandler.
     public record SendMessageCommand(string Username, string Content, string SessionId) : IRequest<MessageDto>;
 
     public class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDto>

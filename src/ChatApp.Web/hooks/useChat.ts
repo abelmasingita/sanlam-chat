@@ -7,6 +7,8 @@ import type { MessageDto } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!
 
+// Manages the SignalR connection lifecycle, message history, and sending.
+// Returns the current message list, connection state, error, and sendMessage function.
 export function useChat(username: string) {
   const [messages, setMessages] = useState<MessageDto[]>([])
   const [connected, setConnected] = useState(false)

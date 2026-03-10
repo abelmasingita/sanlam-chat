@@ -3,6 +3,8 @@ using System.Text.Json;
 
 namespace ChatApp.Api.Middleware
 {
+    // Catches all unhandled exceptions, logs them, and returns a consistent JSON error response.
+    // Prevents stack traces from leaking to clients.
     public class GlobalExceptionMiddleware
     {
         private readonly RequestDelegate _next;

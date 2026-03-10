@@ -19,6 +19,8 @@ namespace ChatApp.Infrastructure.Repositories
             _context = context;
             _logger = logger;
 
+            // Retry up to 3 times with exponential backoff (200ms, 400ms, 600ms)
+            // to handle transient DB connection failures without surfacing errors to the client.
             _retryPolicy = Policy
                 .Handle<Exception>()
                 .WaitAndRetryAsync(
@@ -31,6 +33,8 @@ namespace ChatApp.Infrastructure.Repositories
 
         public async Task<IEnumerable<Message>> GetRecentAsync(int count = 50)
         {
+            // OrderByDescending to get the most recent N rows, then re-sort ascending
+            // so messages are returned in chronological order for the UI.
             return await _retryPolicy.ExecuteAsync(() =>
                 _context.Messages
                     .OrderByDescending(m => m.SentAt)
