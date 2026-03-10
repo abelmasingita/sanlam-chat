@@ -78,7 +78,7 @@ Utility-first CSS for layout. No component library was needed for something this
 
 ## AI Tool Usage
 
-I used **Claude** as an assistant at specific points in the project. All architectural decisions, implementation choices, and final code were mine — Claude played a supporting role in the following areas:
+I used **Claude** as an assistant at specific points in the project. All architectural decisions, implementation choices, and final code were mine - Claude played a supporting role in the following areas:
 
 - **Debug sessions**: When I hit runtime errors, I used Claude to talk through root causes. For example, the duplicate message bug caused by React StrictMode's double-invocation of `useEffect`, and a `GetRecentAsync` ordering bug returning the oldest 50 messages instead of the most recent 50. In both cases I traced the issue with Claude's input, understood the cause, and applied the fix myself.
 - **Frontend scaffolding**: Claude bootstrapped the initial Next.js frontend structure so I could focus my attention on the backend, which is the core of this assessment.
