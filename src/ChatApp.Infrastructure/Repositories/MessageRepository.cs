@@ -3,6 +3,7 @@ using ChatApp.Domain.Interfaces;
 using ChatApp.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using Polly;
 using Polly.Retry;
 
@@ -19,10 +20,12 @@ namespace ChatApp.Infrastructure.Repositories
             _context = context;
             _logger = logger;
 
-            // Retry up to 3 times with exponential backoff (200ms, 400ms, 600ms)
-            // to handle transient DB connection failures without surfacing errors to the client.
+            // Retry up to 3 times with exponential backoff (200ms, 400ms, 600ms) for transient
+            // PostgreSQL errors only (e.g. connection failures, timeouts). Non-transient exceptions
+            // such as validation errors, schema mismatches, or OOM are not retried.
             _retryPolicy = Policy
-                .Handle<Exception>()
+                .Handle<NpgsqlException>(ex => ex.IsTransient)
+                .Or<TimeoutException>()
                 .WaitAndRetryAsync(
                     retryCount: 3,
                     sleepDurationProvider: attempt => TimeSpan.FromMilliseconds(200 * attempt),
@@ -31,25 +34,25 @@ namespace ChatApp.Infrastructure.Repositories
                             attempt, delay.TotalMilliseconds, exception.Message));
         }
 
-        public async Task<IEnumerable<Message>> GetRecentAsync(int count = 50)
+        public async Task<IEnumerable<Message>> GetRecentAsync(int count = 50, CancellationToken cancellationToken = default)
         {
             // OrderByDescending to get the most recent N rows, then re-sort ascending
             // so messages are returned in chronological order for the UI.
-            return await _retryPolicy.ExecuteAsync(() =>
+            return await _retryPolicy.ExecuteAsync(ct =>
                 _context.Messages
                     .OrderByDescending(m => m.SentAt)
                     .Take(count)
                     .OrderBy(m => m.SentAt)
-                    .ToListAsync());
+                    .ToListAsync(ct), cancellationToken);
         }
 
-        public async Task SaveAsync(Message message)
+        public async Task SaveAsync(Message message, CancellationToken cancellationToken = default)
         {
-            await _retryPolicy.ExecuteAsync(async () =>
-            {
-                _context.Messages.Add(message);
-                await _context.SaveChangesAsync();
-            });
+            // Add once outside the retry lambda — the entity is tracked by EF Core after this call.
+            // Calling Add inside the retry would attempt to track an already-tracked entity on retry,
+            // causing InvalidOperationException.
+            _context.Messages.Add(message);
+            await _retryPolicy.ExecuteAsync(ct => _context.SaveChangesAsync(ct), cancellationToken);
         }
     }
 }

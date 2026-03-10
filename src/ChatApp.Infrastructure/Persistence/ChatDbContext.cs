@@ -18,6 +18,8 @@ namespace ChatApp.Infrastructure.Persistence
                 entity.Property(m => m.Content).IsRequired().HasMaxLength(2000);
                 entity.Property(m => m.SessionId).IsRequired();
                 entity.Property(m => m.SentAt).IsRequired();
+                // Index to avoid full table scan on the ORDER BY SentAt DESC LIMIT 50 query.
+                entity.HasIndex(m => m.SentAt);
             });
         }
     }
