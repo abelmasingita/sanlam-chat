@@ -8,6 +8,12 @@ A full-stack chat application that allows multiple anonymous users to communicat
 
 The backend is the primary focus - it is built using Clean Architecture with CQRS, a SignalR hub for real-time broadcasting, EF Core for persistence, and Polly for resilience.
 
+## Screenshots
+
+| Landing | Chat |
+|---|---|
+| ![Landing page](docs/application%20landing.png) | ![Chat room](docs/global%20chat.png) |
+
 ## Technical Choices & Rationale
 
 ### Backend - ASP.NET Core (.NET 8)
@@ -91,6 +97,13 @@ I used **Claude** as an assistant at specific points in the project. All archite
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Node.js 20+](https://nodejs.org/)
 - [PostgreSQL](https://www.postgresql.org/) running locally on port `5432`
+- [EF Core CLI tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet) - install once with:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+> **Redis is optional.** The app runs fine as a single instance without it. See step 3 for how to enable it.
 
 ## Setup & Running Locally
 
@@ -101,7 +114,15 @@ git clone https://github.com/abelmasingita/sanlam-chat.git
 cd sanlam-chat
 ```
 
-### 2. Configure the API
+### 2. Create the database
+
+Connect to your local PostgreSQL instance and create the database:
+
+```sql
+CREATE DATABASE chatapp;
+```
+
+### 3. Configure the API
 
 Create `src/ChatApp.Api/appsettings.Development.json` (this file is gitignored):
 
@@ -113,23 +134,43 @@ Create `src/ChatApp.Api/appsettings.Development.json` (this file is gitignored):
 }
 ```
 
-### 3. Run database migrations
+To enable the Redis backplane (optional - only needed when running multiple API instances), add the Redis connection string to the same file:
 
-```bash
-cd src/ChatApp.Api
-dotnet ef database update --project ../ChatApp.Infrastructure
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=chatapp;Username=postgres;Password=YOUR_PASSWORD",
+    "Redis": "localhost:6379"
+  }
+}
 ```
 
-### 4. Start the API
+If you have Docker, you can spin up Redis with:
+
+```bash
+docker run -d -p 6379:6379 redis
+```
+
+### 4. Run database migrations
+
+From the repository root:
+
+```bash
+dotnet ef database update --project src/ChatApp.Infrastructure --startup-project src/ChatApp.Api
+```
+
+This applies all pending migrations and creates the schema in the `chatapp` database.
+
+### 5. Start the API
 
 ```bash
 cd src/ChatApp.Api
 dotnet run
 ```
 
-API runs on `http://localhost:5111`.
+API runs on `http://localhost:5111`. Swagger UI is available at `http://localhost:5111/swagger`.
 
-### 5. Configure the frontend
+### 6. Configure the frontend
 
 Create `src/ChatApp.Web/.env.local`:
 
@@ -137,7 +178,7 @@ Create `src/ChatApp.Web/.env.local`:
 NEXT_PUBLIC_API_URL=http://localhost:5111
 ```
 
-### 6. Start the frontend
+### 7. Start the frontend
 
 ```bash
 cd src/ChatApp.Web
@@ -147,7 +188,7 @@ npm run dev
 
 Frontend runs on `http://localhost:3000`.
 
-### 7. Open the app
+### 8. Open the app
 
 Navigate to `http://localhost:3000`, enter a username, and start chatting. Open a second browser tab with a different username to test real-time broadcasting.
 
@@ -155,10 +196,10 @@ Navigate to `http://localhost:3000`, enter a username, and start chatting. Open 
 
 Technical diagrams are in the `/docs` folder:
 
-- `component-diagram.drawio.pdf` - Backend component breakdown
-- `erd-diagram.drawio.pdf` - Database schema
-- `sequence-diagram.drawio.pdf` - Message flow from client send to broadcast
-- `chat-architecture.drawio.pdf` - Full system architecture overview
+- [`component-diagram.drawio.pdf`](docs/component-diagram.drawio.pdf) - Backend component breakdown
+- [`erd-diagram.drawio.pdf`](docs/erd-diagram.drawio.pdf) - Database schema
+- [`sequence-diagram.drawio.pdf`](docs/sequence-diagram.drawio.pdf) - Message flow from client send to broadcast
+- [`chat-architecture.drawio.pdf`](docs/chat-architecture.drawio.pdf) - Full system architecture overview
 
 ## Assumptions & Trade-offs
 
