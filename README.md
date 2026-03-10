@@ -124,15 +124,33 @@ CREATE DATABASE chatapp;
 
 ### 3. Configure the API
 
-Create `src/ChatApp.Api/appsettings.Development.json` (this file is gitignored):
+Copy the example config and fill in your PostgreSQL password:
+
+```bash
+cp src/ChatApp.Api/appsettings.Example.json src/ChatApp.Api/appsettings.Development.json
+```
+
+Then edit `src/ChatApp.Api/appsettings.Development.json` and replace `YOUR_PASSWORD` with your PostgreSQL password:
 
 ```json
 {
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=chatapp;Username=postgres;Password=YOUR_PASSWORD"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Cors": {
+    "AllowedOrigins": [ "http://localhost:3000" ]
   }
 }
 ```
+
+> `appsettings.Development.json` is gitignored and will not be committed.
 
 To enable the Redis backplane (optional - only needed when running multiple API instances), add the Redis connection string to the same file:
 
@@ -165,17 +183,31 @@ This applies all pending migrations and creates the schema in the `chatapp` data
 
 ```bash
 cd src/ChatApp.Api
-dotnet run
+ASPNETCORE_ENVIRONMENT=Development dotnet run
+```
+
+On Windows (Command Prompt):
+
+```cmd
+set ASPNETCORE_ENVIRONMENT=Development && dotnet run
+```
+
+On Windows (PowerShell):
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT="Development"; dotnet run
 ```
 
 API runs on `http://localhost:5111`. Swagger UI is available at `http://localhost:5111/swagger`.
+
+> The `ASPNETCORE_ENVIRONMENT` variable tells the app to load `appsettings.Development.json`. Without it, the environment defaults to `Production` and the connection string will not be found.
 
 ### 6. Configure the frontend
 
 Create `src/ChatApp.Web/.env.local`:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:5111
+NEXT_PUBLIC_API_URL=https://localhost:7190
 ```
 
 ### 7. Start the frontend
@@ -191,6 +223,12 @@ Frontend runs on `http://localhost:3000`.
 ### 8. Open the app
 
 Navigate to `http://localhost:3000`, enter a username, and start chatting. Open a second browser tab with a different username to test real-time broadcasting.
+
+### 9. Run the tests (optional)
+
+```bash
+dotnet test tests/ChatApp.Tests
+```
 
 ## Diagrams
 
