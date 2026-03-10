@@ -9,15 +9,17 @@ import { useChat } from "@/hooks/useChat";
 function ChatRoom() {
   const router = useRouter();
   const params = useSearchParams();
-  const username = params.get("username")?.trim() ?? "";
+  const username =
+    params.get("username")?.trim() ||
+    (typeof window !== "undefined" ? sessionStorage.getItem("username") ?? "" : "");
 
-  // Redirect to join page if no username was provided
+  // Redirect to join page if no username in query string or sessionStorage
   if (!username) {
     router.replace("/");
     return null;
   }
 
-  const { messages, connected, error, sendMessage } = useChat(username);
+  const { messages, connected, connectionId, error, sendMessage } = useChat(username);
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -52,7 +54,7 @@ function ChatRoom() {
       )}
 
       {/* Messages */}
-      <MessageList messages={messages} currentUser={username} />
+      <MessageList messages={messages} connectionId={connectionId} />
 
       {/* Input */}
       <MessageInput onSend={sendMessage} disabled={!connected} />

@@ -41,6 +41,7 @@ namespace ChatApp.Application.Features.Messages.Commands
             return new MessageDto
             {
                 MessageId = message.MessageId,
+                SessionId = message.SessionId,
                 Username = message.Username,
                 Content = message.Content,
                 SentAt = message.SentAt

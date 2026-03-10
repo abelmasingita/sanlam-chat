@@ -2,16 +2,15 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import * as signalR from '@microsoft/signalr'
-import { getConnection, resetConnection } from '@/lib/signalr'
+import { getConnection, resetConnection, API_URL } from '@/lib/signalr'
 import type { MessageDto } from '@/types'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5111"
 
 // Manages the SignalR connection lifecycle, message history, and sending.
 // Returns the current message list, connection state, error, and sendMessage function.
 export function useChat(username: string) {
   const [messages, setMessages] = useState<MessageDto[]>([])
   const [connected, setConnected] = useState(false)
+  const [connectionId, setConnectionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const connectionRef = useRef<signalR.HubConnection | null>(null)
 
@@ -48,6 +47,7 @@ export function useChat(username: string) {
         }
         if (active) {
           setConnected(true)
+          setConnectionId(conn.connectionId)
           setError(null)
         }
       } catch (err) {
@@ -82,5 +82,5 @@ export function useChat(username: string) {
     [username],
   )
 
-  return { messages, connected, error, sendMessage }
+  return { messages, connected, connectionId, error, sendMessage }
 }

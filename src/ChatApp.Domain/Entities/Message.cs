@@ -6,6 +6,6 @@ namespace ChatApp.Domain.Entities
         public string SessionId { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public DateTime SentAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset SentAt { get; set; } = DateTimeOffset.UtcNow;
     }
 }

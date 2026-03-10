@@ -23,6 +23,7 @@ namespace ChatApp.Application.Features.Messages.Queries
             return messages.Select(m => new MessageDto
             {
                 MessageId = m.MessageId,
+                SessionId = m.SessionId,
                 Username = m.Username,
                 Content = m.Content,
                 SentAt = m.SentAt

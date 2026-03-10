@@ -5,10 +5,10 @@ import type { MessageDto } from "@/types";
 
 interface Props {
   messages: MessageDto[];
-  currentUser: string;
+  connectionId: string | null;
 }
 
-export default function MessageList({ messages, currentUser }: Props) {
+export default function MessageList({ messages, connectionId }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function MessageList({ messages, currentUser }: Props) {
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-3">
       {messages.map((msg) => {
-        const isOwn = msg.username === currentUser;
+        const isOwn = connectionId !== null && msg.sessionId === connectionId;
         return (
           <div
             key={msg.messageId}

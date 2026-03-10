@@ -1,6 +1,6 @@
 import * as signalR from "@microsoft/signalr";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5111";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5111";
 
 // Singleton - one HubConnection instance is shared for the lifetime of the page.
 let connection: signalR.HubConnection | null = null;
