@@ -6,19 +6,10 @@ import MessageList from "@/components/MessageList";
 import MessageInput from "@/components/MessageInput";
 import { useChat } from "@/hooks/useChat";
 
-function ChatRoom() {
+// Inner component — always rendered with a valid username, so useChat is
+// called unconditionally on every render, satisfying the Rules of Hooks.
+function ChatView({ username }: { username: string }) {
   const router = useRouter();
-  const params = useSearchParams();
-  const username =
-    params.get("username")?.trim() ||
-    (typeof window !== "undefined" ? sessionStorage.getItem("username") ?? "" : "");
-
-  // Redirect to join page if no username in query string or sessionStorage
-  if (!username) {
-    router.replace("/");
-    return null;
-  }
-
   const { messages, connected, connectionId, error, sendMessage } = useChat(username);
 
   return (
@@ -60,6 +51,23 @@ function ChatRoom() {
       <MessageInput onSend={sendMessage} disabled={!connected} />
     </div>
   );
+}
+
+// Outer guard — resolves username then either redirects or renders ChatView.
+// Keeping the guard separate ensures useChat is never called conditionally.
+function ChatRoom() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const username =
+    params.get("username")?.trim() ||
+    (typeof window !== "undefined" ? sessionStorage.getItem("username") ?? "" : "");
+
+  if (!username) {
+    router.replace("/");
+    return null;
+  }
+
+  return <ChatView username={username} />;
 }
 
 export default function ChatPage() {

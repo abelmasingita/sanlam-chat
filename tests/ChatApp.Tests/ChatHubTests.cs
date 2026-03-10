@@ -68,11 +68,11 @@ public class ChatHubTests
     }
 
     [Fact]
-    public async Task SendMessage_ValidationException_ThrowsHubException()
+    public async Task SendMessage_DomainValidationException_ThrowsHubException()
     {
         var request = new SendMessageRequest { Username = "", Content = "Hello" };
         _mediator.Setup(m => m.Send(It.IsAny<SendMessageCommand>(), It.IsAny<CancellationToken>()))
-                 .ThrowsAsync(new ValidationException("Username is required."));
+                 .ThrowsAsync(new DomainValidationException("Username is required."));
 
         var ex = await Assert.ThrowsAsync<HubException>(() => _hub.SendMessage(request));
         Assert.Equal("Username is required.", ex.Message);

@@ -23,7 +23,7 @@ namespace ChatApp.Api.Middleware
             {
                 await _next(context);
             }
-            catch (ValidationException ex)
+            catch (DomainValidationException ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/json";

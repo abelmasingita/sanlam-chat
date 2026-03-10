@@ -21,20 +21,15 @@ namespace ChatApp.Application.Features.Messages.Commands
         public async Task<MessageDto> Handle(SendMessageCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Username))
-                throw new ValidationException("Username is required.");
+                throw new DomainValidationException("Username is required.");
             if (request.Username.Length > 100)
-                throw new ValidationException("Username cannot exceed 100 characters.");
+                throw new DomainValidationException("Username cannot exceed 100 characters.");
             if (string.IsNullOrWhiteSpace(request.Content))
-                throw new ValidationException("Message content cannot be empty.");
+                throw new DomainValidationException("Message content cannot be empty.");
             if (request.Content.Length > 2000)
-                throw new ValidationException("Message cannot exceed 2000 characters.");
+                throw new DomainValidationException("Message cannot exceed 2000 characters.");
 
-            var message = new Message
-            {
-                SessionId = request.SessionId,
-                Username = request.Username,
-                Content = request.Content
-            };
+            var message = new Message(request.Username, request.Content, request.SessionId);
 
             await _repository.SaveAsync(message, cancellationToken);
 

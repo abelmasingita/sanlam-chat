@@ -20,8 +20,8 @@ public class GetRecentMessagesHandlerTests
     {
         var messages = new List<Message>
         {
-            new() { MessageId = Guid.NewGuid(), SessionId = "s1", Username = "alice", Content = "Hi", SentAt = DateTimeOffset.UtcNow },
-            new() { MessageId = Guid.NewGuid(), SessionId = "s2", Username = "bob",   Content = "Hey", SentAt = DateTimeOffset.UtcNow }
+            new("alice", "Hi",  "s1"),
+            new("bob",   "Hey", "s2")
         };
         _repo.Setup(r => r.GetRecentAsync(50, CancellationToken.None)).ReturnsAsync(messages);
 

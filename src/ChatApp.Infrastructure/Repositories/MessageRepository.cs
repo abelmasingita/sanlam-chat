@@ -52,7 +52,18 @@ namespace ChatApp.Infrastructure.Repositories
             // Calling Add inside the retry would attempt to track an already-tracked entity on retry,
             // causing InvalidOperationException.
             _context.Messages.Add(message);
-            await _retryPolicy.ExecuteAsync(ct => _context.SaveChangesAsync(ct), cancellationToken);
+            try
+            {
+                await _retryPolicy.ExecuteAsync(ct => _context.SaveChangesAsync(ct), cancellationToken);
+            }
+            catch
+            {
+                // Detach the entity so the shared DbContext is not left in a dirty Added state
+                // after a non-transient failure. Without this, any subsequent operation on the
+                // same scoped instance would find a poisoned change tracker.
+                _context.Entry(message).State = EntityState.Detached;
+                throw;
+            }
         }
     }
 }

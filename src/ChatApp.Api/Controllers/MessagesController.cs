@@ -16,9 +16,12 @@ namespace ChatApp.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRecent()
+        public async Task<IActionResult> GetRecent([FromQuery] int count = 50)
         {
-            var messages = await _mediator.Send(new GetRecentMessagesQuery());
+            if (count < 1 || count > 100)
+                return BadRequest(new { error = "count must be between 1 and 100." });
+
+            var messages = await _mediator.Send(new GetRecentMessagesQuery(count));
             return Ok(messages);
         }
     }
