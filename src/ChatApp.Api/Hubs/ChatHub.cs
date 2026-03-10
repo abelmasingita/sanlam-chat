@@ -36,7 +36,7 @@ namespace ChatApp.Api.Hubs
 
                 await Clients.All.SendAsync("ReceiveMessage", dto);
             }
-            catch (ValidationException ex)
+            catch (DomainValidationException ex)
             {
                 throw new HubException(ex.Message);
             }

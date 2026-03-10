@@ -37,42 +37,42 @@ public class SendMessageHandlerTests
     [Theory]
     [InlineData("", "Hello")]
     [InlineData("   ", "Hello")]
-    public async Task Handle_EmptyUsername_ThrowsValidationException(string username, string content)
+    public async Task Handle_EmptyUsername_ThrowsDomainValidationException(string username, string content)
     {
         var command = new SendMessageCommand(username, content, "conn-1");
 
-        await Assert.ThrowsAsync<ValidationException>(() =>
+        await Assert.ThrowsAsync<DomainValidationException>(() =>
             _handler.Handle(command, CancellationToken.None));
 
         _repo.Verify(r => r.SaveAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
-    public async Task Handle_UsernameTooLong_ThrowsValidationException()
+    public async Task Handle_UsernameTooLong_ThrowsDomainValidationException()
     {
         var command = new SendMessageCommand(new string('a', 101), "Hello", "conn-1");
 
-        await Assert.ThrowsAsync<ValidationException>(() =>
+        await Assert.ThrowsAsync<DomainValidationException>(() =>
             _handler.Handle(command, CancellationToken.None));
     }
 
     [Theory]
     [InlineData("alice", "")]
     [InlineData("alice", "   ")]
-    public async Task Handle_EmptyContent_ThrowsValidationException(string username, string content)
+    public async Task Handle_EmptyContent_ThrowsDomainValidationException(string username, string content)
     {
         var command = new SendMessageCommand(username, content, "conn-1");
 
-        await Assert.ThrowsAsync<ValidationException>(() =>
+        await Assert.ThrowsAsync<DomainValidationException>(() =>
             _handler.Handle(command, CancellationToken.None));
     }
 
     [Fact]
-    public async Task Handle_ContentTooLong_ThrowsValidationException()
+    public async Task Handle_ContentTooLong_ThrowsDomainValidationException()
     {
         var command = new SendMessageCommand("alice", new string('a', 2001), "conn-1");
 
-        await Assert.ThrowsAsync<ValidationException>(() =>
+        await Assert.ThrowsAsync<DomainValidationException>(() =>
             _handler.Handle(command, CancellationToken.None));
     }
 
