@@ -29,12 +29,7 @@ namespace ChatApp.Application.Features.Messages.Commands
             if (request.Content.Length > 2000)
                 throw new DomainValidationException("Message cannot exceed 2000 characters.");
 
-            var message = new Message
-            {
-                SessionId = request.SessionId,
-                Username = request.Username,
-                Content = request.Content
-            };
+            var message = new Message(request.Username, request.Content, request.SessionId);
 
             await _repository.SaveAsync(message, cancellationToken);
 
