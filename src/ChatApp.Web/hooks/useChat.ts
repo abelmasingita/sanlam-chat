@@ -5,7 +5,7 @@ import * as signalR from '@microsoft/signalr'
 import { getConnection, resetConnection } from '@/lib/signalr'
 import type { MessageDto } from '@/types'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5111"
 
 // Manages the SignalR connection lifecycle, message history, and sending.
 // Returns the current message list, connection state, error, and sendMessage function.
@@ -71,7 +71,13 @@ export function useChat(username: string) {
   const sendMessage = useCallback(
     async (content: string) => {
       if (!connectionRef.current || !content.trim()) return
-      await connectionRef.current.invoke('SendMessage', { username, content })
+      try {
+        await connectionRef.current.invoke('SendMessage', { username, content })
+        setError(null)
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to send message.'
+        setError(message)
+      }
     },
     [username],
   )

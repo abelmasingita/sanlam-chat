@@ -9,7 +9,13 @@ import { useChat } from "@/hooks/useChat";
 function ChatRoom() {
   const router = useRouter();
   const params = useSearchParams();
-  const username = params.get("username") ?? "Anonymous";
+  const username = params.get("username")?.trim() ?? "";
+
+  // Redirect to join page if no username was provided
+  if (!username) {
+    router.replace("/");
+    return null;
+  }
 
   const { messages, connected, error, sendMessage } = useChat(username);
 

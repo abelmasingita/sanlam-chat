@@ -1,4 +1,5 @@
 using ChatApp.Application.Contracts;
+using ChatApp.Application.Exceptions;
 using ChatApp.Domain.Entities;
 using ChatApp.Domain.Interfaces;
 using MediatR;
@@ -19,6 +20,15 @@ namespace ChatApp.Application.Features.Messages.Commands
 
         public async Task<MessageDto> Handle(SendMessageCommand request, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(request.Username))
+                throw new ValidationException("Username is required.");
+            if (request.Username.Length > 100)
+                throw new ValidationException("Username cannot exceed 100 characters.");
+            if (string.IsNullOrWhiteSpace(request.Content))
+                throw new ValidationException("Message content cannot be empty.");
+            if (request.Content.Length > 2000)
+                throw new ValidationException("Message cannot exceed 2000 characters.");
+
             var message = new Message
             {
                 SessionId = request.SessionId,
