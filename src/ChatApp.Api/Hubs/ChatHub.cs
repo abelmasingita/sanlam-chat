@@ -3,6 +3,7 @@ using ChatApp.Application.Exceptions;
 using ChatApp.Application.Features.Messages.Commands;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using System.Threading.RateLimiting;
 
 namespace ChatApp.Api.Hubs
 {
@@ -10,11 +11,13 @@ namespace ChatApp.Api.Hubs
     {
         private readonly IMediator _mediator;
         private readonly ILogger<ChatHub> _logger;
+        private readonly PartitionedRateLimiter<string> _rateLimiter;
 
-        public ChatHub(IMediator mediator, ILogger<ChatHub> logger)
+        public ChatHub(IMediator mediator, ILogger<ChatHub> logger, PartitionedRateLimiter<string> rateLimiter)
         {
             _mediator = mediator;
             _logger = logger;
+            _rateLimiter = rateLimiter;
         }
 
         // Clients invoke this method. The message is persisted via MediatR,
@@ -22,6 +25,10 @@ namespace ChatApp.Api.Hubs
         // HubException sends a structured error back to the caller without closing the connection.
         public async Task SendMessage(SendMessageRequest request)
         {
+            using var lease = await _rateLimiter.AcquireAsync(Context.ConnectionId);
+            if (!lease.IsAcquired)
+                throw new HubException("Too many messages. Please slow down.");
+
             try
             {
                 var dto = await _mediator.Send(

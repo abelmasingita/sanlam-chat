@@ -2,6 +2,7 @@ using ChatApp.Application;
 using ChatApp.Api.Hubs;
 using ChatApp.Api.Middleware;
 using ChatApp.Infrastructure;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +13,25 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Per-connection fixed-window rate limiter: max 5 messages per 5 seconds.
+// Keyed by ConnectionId so each client is limited independently.
+builder.Services.AddSingleton<PartitionedRateLimiter<string>>(
+    PartitionedRateLimiter.Create<string, string>(connectionId =>
+        RateLimitPartition.GetFixedWindowLimiter(connectionId, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromSeconds(5),
+            QueueLimit = 0
+        })));
+
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
-        policy.SetIsOriginAllowed(_ => true)
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
@@ -37,10 +53,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-if (!app.Environment.IsDevelopment())
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.UseAuthorization();
 app.MapControllers();
 app.MapHub<ChatHub>("/hubs/chat");
 

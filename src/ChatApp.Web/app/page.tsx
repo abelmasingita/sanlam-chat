@@ -10,6 +10,7 @@ export default function Home() {
   function handleJoin() {
     const trimmed = username.trim();
     if (!trimmed) return;
+    sessionStorage.setItem("username", trimmed);
     router.push(`/chat?username=${encodeURIComponent(trimmed)}`);
   }
 

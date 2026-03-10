@@ -18,11 +18,12 @@ namespace ChatApp.Application.Features.Messages.Queries
 
         public async Task<IEnumerable<MessageDto>> Handle(GetRecentMessagesQuery request, CancellationToken cancellationToken)
         {
-            var messages = await _repository.GetRecentAsync(request.Count);
+            var messages = await _repository.GetRecentAsync(request.Count, cancellationToken);
 
             return messages.Select(m => new MessageDto
             {
                 MessageId = m.MessageId,
+                SessionId = m.SessionId,
                 Username = m.Username,
                 Content = m.Content,
                 SentAt = m.SentAt

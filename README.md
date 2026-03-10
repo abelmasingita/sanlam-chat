@@ -209,7 +209,7 @@ Technical diagrams are in the `/docs` folder:
 | Single global chat room | The requirement describes a single shared chat space. Room/channel support would require schema changes and was out of scope. |
 | Last 50 messages shown on join | A reasonable default. No pagination is implemented - acceptable for a demo, not for production. |
 | Redis backplane disabled by default | Requires a running Redis instance. Disabled for ease of local setup; the wiring is in place to enable with one line. |
-| No backend input validation | Frontend trims and blocks empty messages. Production would require server-side validation (length limits, sanitisation). |
+| Backend input validation | Username (max 100 chars) and message content (max 2000 chars) are validated server-side in `SendMessageCommand`. Frontend additionally trims and blocks empty messages before sending. |
 
 ## Known Limitations
 
@@ -226,8 +226,8 @@ Technical diagrams are in the `/docs` folder:
 - **Authorisation**: Scope SignalR connections to authenticated users; sign messages with the server-verified identity rather than a client-supplied username
 - **Rooms / channels**: Add a `Room` entity, scope hub groups per room, and require users to join a room before broadcasting
 - **Pagination**: Cursor-based pagination on `GET /api/messages` with infinite scroll on the frontend
-- **Input validation**: `FluentValidation` pipeline behaviour in MediatR for all commands
-- **Rate limiting**: Per-connection message rate limiting on the hub to prevent flooding
+- **Input validation**: Replace manual checks in `SendMessageCommand` with a `FluentValidation` pipeline behaviour in MediatR for all commands
+- **Rate limiting**: ~~Per-connection message rate limiting on the hub to prevent flooding~~ Implemented — 5 messages per 5 seconds per connection
 - **Redis backplane**: Enable for horizontal scaling; use managed Redis (e.g. Azure Cache for Redis)
 - **Health checks**: `AddHealthChecks()` with DB and Redis probes, exposed at `/health`
 - **Observability**: Structured logging (Serilog - OpenTelemetry), distributed tracing, metrics

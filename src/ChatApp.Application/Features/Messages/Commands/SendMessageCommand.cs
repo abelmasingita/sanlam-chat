@@ -36,11 +36,12 @@ namespace ChatApp.Application.Features.Messages.Commands
                 Content = request.Content
             };
 
-            await _repository.SaveAsync(message);
+            await _repository.SaveAsync(message, cancellationToken);
 
             return new MessageDto
             {
                 MessageId = message.MessageId,
+                SessionId = message.SessionId,
                 Username = message.Username,
                 Content = message.Content,
                 SentAt = message.SentAt
