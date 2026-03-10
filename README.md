@@ -58,7 +58,7 @@ SignalR manages connected clients in memory. If the API is scaled out to multipl
 
 Rather than wrapping every controller action in try/catch, a single middleware catches all unhandled exceptions, logs them with the request method and path, and returns a consistent `{ "error": "..." }` JSON response with a 500 status. This prevents stack traces from leaking to clients and ensures every error follows the same response shape.
 
-### Frontend — Next.js 16 + TypeScript
+### Frontend - Next.js 16 + TypeScript
 
 The assessment allows any frontend. I chose Next.js because it has first-class TypeScript support and I wanted type safety across the component boundaries without significant setup overhead. The frontend is intentionally minimal - its purpose is to prove the backend works end-to-end, not to demonstrate frontend depth.
 
