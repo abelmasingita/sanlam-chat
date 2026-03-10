@@ -28,7 +28,7 @@ export default function Home() {
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleJoin()}
             placeholder="Your name"
-            maxLength={50}
+            maxLength={100}
             className="rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500 transition-colors"
             autoFocus
           />
