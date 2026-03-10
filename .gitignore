@@ -5,7 +5,6 @@
 /src/ChatApp.Api/obj
 /.vs/ChatApp.slnx/FileContentIndex/22fb6f00-49d0-431b-b8ca-974d9824e562.vsidx
 /.vs/ChatApp.slnx/v18
-/src/ChatApp.Api/Properties/launchSettings.json
 /src/ChatApp.Application/obj
 /src/ChatApp.Domain/obj
 /src/ChatApp.Infrastructure/obj

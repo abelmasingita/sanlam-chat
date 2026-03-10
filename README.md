@@ -183,24 +183,10 @@ This applies all pending migrations and creates the schema in the `chatapp` data
 
 ```bash
 cd src/ChatApp.Api
-ASPNETCORE_ENVIRONMENT=Development dotnet run
+dotnet run --launch-profile https
 ```
 
-On Windows (Command Prompt):
-
-```cmd
-set ASPNETCORE_ENVIRONMENT=Development && dotnet run
-```
-
-On Windows (PowerShell):
-
-```powershell
-$env:ASPNETCORE_ENVIRONMENT="Development"; dotnet run
-```
-
-API runs on `http://localhost:5111`. Swagger UI is available at `http://localhost:5111/swagger`.
-
-> The `ASPNETCORE_ENVIRONMENT` variable tells the app to load `appsettings.Development.json`. Without it, the environment defaults to `Production` and the connection string will not be found.
+API runs on `https://localhost:7190`. Swagger UI is available at `https://localhost:7190/swagger`.
 
 ### 6. Configure the frontend
 
