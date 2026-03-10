@@ -21,8 +21,12 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
-builder.Services.AddSignalR()
-.AddStackExchangeRedis(builder.Configuration.GetConnectionString("Redis")!);
+// Redis backplane synchronises SignalR across multiple API instances.
+// It is optional - if no Redis connection string is configured the app runs as a single instance.
+var signalR = builder.Services.AddSignalR();
+var redisConnection = builder.Configuration.GetConnectionString("Redis");
+if (!string.IsNullOrEmpty(redisConnection))
+    signalR.AddStackExchangeRedis(redisConnection);
 
 var app = builder.Build();
 
